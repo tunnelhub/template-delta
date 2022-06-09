@@ -9,8 +9,8 @@ In the next execution, it will consider only changes between the last extraction
 It is designed for maximum flexibility with individual logs by entry and save processing time using delta images.
 
 ### Default configuration:
-* Environment: nodejs12.x
-* Memory: 512mb
+* Environment: nodejs14.x
+* Memory: 128mb
 * Timeout: 60s
 
 You can personalize this settings in tunnelhub.yml file
