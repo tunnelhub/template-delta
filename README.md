@@ -15,7 +15,7 @@ It is designed for maximum flexibility with individual logs by entry and saves p
 * Memory: 128mb
 * Timeout: 60s
 
-You can personalize these settings in **tunnelhub.yml** file.
+You can personalize these settings in the **tunnelhub.yml** file.
 
 ### Intructions:
 
