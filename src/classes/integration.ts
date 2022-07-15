@@ -1,254 +1,70 @@
 import { DeltaIntegrationFlow } from '@4success/tunnelhub-sdk/src/classes/flows/deltaIntegrationFlow';
-import * as mysql from 'mysql';
-import { FieldInfo } from 'mysql';
 import { IntegrationMessageReturn, Metadata } from '@4success/tunnelhub-sdk';
-import got from 'got';
-import * as moment from 'moment';
+import { GenericParameter, TunnelHubSystem } from '@4success/tunnelhub-sdk/src/types/data';
+import { IntegrationModel } from '../data';
 
-/**
- * Integration main type
- */
-type CovidCases = {
-  stateName: string;
-  confirmed: number;
-  recovered: number;
-  deaths: number;
-  updated: string
-};
-
-type MySqlResult = {
-  results: CovidCases[];
-  fields: FieldInfo[];
-}
-
-/**
- * This is our main class that will be responsible to process our automation
- * Basically, you only need to implement the abstract methods and write your business logic
- *
- * We provide important instructions for all methods
- */
 export default class Integration extends DeltaIntegrationFlow {
-  private static keyFields: string[] = [
-    'stateName',
-  ];
-  private static deltaFields: string[] = [
-    'confirmed',
-    'recovered',
-    'deaths',
-    'updated',
-  ];
-  private connection: mysql.Connection;
-  private readonly systems: any[];
+  private static keyFields: string[] = ['key_field'];
+  private static deltaFields: string[] = ['regular_field'];
 
-  /**
-   * It is mandatory have the constructor and call the super with event of main handler
-   * You can get the systems configured in automation and save in class property for further use
-   * @param event
-   * @param context
-   */
+  private readonly parameters: { custom: GenericParameter[] };
+  private readonly systems: TunnelHubSystem[];
+
   constructor(event: any, context: any) {
     super(event, Integration.keyFields, Integration.deltaFields, context);
+
     this.systems = event.systems ?? [];
+    this.parameters = event.parameters ?? {};
   }
 
-  /**
-   * Return all columns that will be visible in monitoring screen.
-   * The components order is the display order in monitoring table
-   *
-   * The implementation of this method is mandatory
-   */
-  defineMetadata(): Metadata[] {
-    return [
-      {
-        fieldName: 'stateName',
-        fieldLabel: 'State name',
-        fieldType: 'TEXT',
-      },
-      {
-        fieldName: 'confirmed',
-        fieldLabel: 'Confirmed cases',
-        fieldType: 'NUMBER',
-      },
-      {
-        fieldName: 'recovered',
-        fieldLabel: 'Recovered cases',
-        fieldType: 'NUMBER',
-      },
-      {
-        fieldName: 'deaths',
-        fieldLabel: 'Deaths',
-        fieldType: 'NUMBER',
-      },
-      {
-        fieldName: 'updated',
-        fieldLabel: 'Last updated at',
-        fieldType: 'DATETIME',
-      },
-    ];
-  }
-
-  /**
-   * Return the source system data as a plain array of objets
-   *
-   * This is the method where you will extract your source data
-   * If your automation is a webhook, the payload sent by caller will be avaiable
-   * in "payload" parameter.
-   *
-   * The implementation of this method is mandatory
-   *
-   * @param payload
-   */
-  async loadSourceSystemData(payload?: any): Promise<CovidCases[]> {
-    /**
-     * You can get credentials form associated systems with:
-     * const system = this.systems.find(value => value.internalName === 'INTERNAL_SYSTEM_NAME');
-     */
-    const sourceSystemData: CovidCases[] = [];
-    const gotResponse = await got(`https://covid-api.mmediagroup.fr/v1/cases?ab=BR`);
-
-    const covidCases: CovidCases[] = JSON.parse(gotResponse.body);
-    for (const state in covidCases) {
-      if (state === 'All') {
-        continue;
-      }
-      if (covidCases.hasOwnProperty(state)) {
-        sourceSystemData.push({
-          stateName: state,
-          confirmed: state === 'Acre' ? 1000 : covidCases[state].confirmed,
-          recovered: covidCases[state].recovered,
-          deaths: covidCases[state].deaths,
-          updated: moment(covidCases[state].updated, 'YYYY/MM/DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
-        });
-      }
+  /* istanbul ignore next */
+  defineMetadata = (): Metadata[] => [
+    {
+      fieldName: 'key_field',
+      fieldLabel: 'Key field',
+      fieldType: 'TEXT'
+    },
+    {
+      fieldName: 'regular_field',
+      fieldLabel: 'Regular field',
+      fieldType: 'TEXT'
     }
-    return sourceSystemData;
-  }
+  ];
 
-  async loadTargetSystemData(): Promise<CovidCases[]> {
-    const connection = this.createConnection();
-
-    const queryResult: MySqlResult = await new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM covidCases', function(error, results, fields) {
-        if (error) {
-          reject(error);
-        } else {
-          resolve({
-            results,
-            fields,
-          });
-        }
-      });
-    });
-
-    return queryResult.results.map(item => {
-      item.updated = moment(item.updated, 'YYYY/MM/DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
-      return item;
-    });
-  }
-
-  async insertAction(item: CovidCases): Promise<IntegrationMessageReturn> {
-    const connection = this.createConnection();
-
-    await new Promise((resolve, reject) => {
-      connection.query(`INSERT INTO covidCases SET ?`, item, function(error, results, fields) {
-        if (error) {
-          reject(error);
-        } else {
-          resolve({
-            results,
-            fields,
-          });
-        }
-      });
-    });
-
-    return {
-      data: {},
-      message: 'Item inserido com sucesso',
-    };
-  }
-
-  async updateAction(oldItem: CovidCases, newItem: CovidCases): Promise<IntegrationMessageReturn> {
-    const connection = this.createConnection();
-
-    await new Promise((resolve, reject) => {
-      connection.query(`UPDATE covidCases
-                        SET confirmed = ?,
-                            recovered = ?,
-                            deaths    = ?,
-                            updated   = ?
-                        WHERE stateName = ?`, [
-        newItem.confirmed,
-        newItem.recovered,
-        newItem.deaths,
-        newItem.updated,
-        newItem.stateName,
-      ], (err, results, fields) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({
-            results,
-            fields,
-          });
-        }
-      });
-    });
-    return {
-      data: {},
-      message: 'Item atualizado com sucesso',
-    };
-  }
-
-  async deleteAction(item: CovidCases): Promise<IntegrationMessageReturn> {
-    const connection = this.createConnection();
-
-    await new Promise((resolve, reject) => {
-      connection.query(`DELETE
-                        FROM covidCases
-                        WHERE stateName = ?`, [
-        item.stateName,
-      ], (err, results, fields) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({
-            results,
-            fields,
-          });
-        }
-      });
-    });
-
-    return {
-      data: {},
-      message: 'Item apagado com sucesso',
-    };
-  }
-
-  protected async preProcessingCustomerRoutines(): Promise<void> {
-    this.createConnection();
-  };
-
-  protected async postProcessingCustomerRoutines(): Promise<void> {
-    this.closeConnection();
-  }
-
-  private createConnection(): mysql.Connection {
-    if (!this.connection) {
-      return mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'root',
-        database: 'test',
-      });
+  loadSourceSystemData = async (payload?: any): Promise<IntegrationModel[]> => [
+    {
+      key_field: '1',
+      regular_field: 'anyString'
+    },
+    {
+      key_field: '2',
+      regular_field: 'anotherString'
     }
-    return this.connection;
-  }
+  ];
 
-  private closeConnection(): void {
-    if (this.connection) {
-      this.connection.end();
+  loadTargetSystemData = async (): Promise<IntegrationModel[]> => [
+    {
+      key_field: '2',
+      regular_field: 'oldAnotherString'
+    },
+    {
+      key_field: '3',
+      regular_field: 'anyotherstring'
     }
-  }
+  ];
+
+  insertAction = async (item: IntegrationModel): Promise<IntegrationMessageReturn> => ({
+    data: {},
+    message: 'Inserted successfully'
+  });
+
+  updateAction = async (oldItem: IntegrationModel, newItem: IntegrationModel): Promise<IntegrationMessageReturn> => ({
+    data: {},
+    message: 'Updated successfully'
+  });
+
+  deleteAction = async (item: IntegrationModel): Promise<IntegrationMessageReturn> => ({
+    data: {},
+    message: 'Delete successfully'
+  });
 }

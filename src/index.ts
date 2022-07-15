@@ -19,6 +19,6 @@ export const handler = async (event: any, context: any): Promise<ProxyResult> =>
   }
   return {
     statusCode: 200,
-    body: 'Automation executed with no errors!',
+    body: 'Automation executed with no errors!'
   };
 };

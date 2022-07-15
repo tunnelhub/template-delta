@@ -7,7 +7,7 @@ package:
 
 configuration:
   runtimeEngine: LAMBDA
-  entrypoint: index.handler  
+  entrypoint: index.handler
   runtime: nodejs14.x
   memorySize: 128
   timeout: 30
