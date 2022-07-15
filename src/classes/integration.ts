@@ -19,16 +19,16 @@ export default class Integration extends DeltaIntegrationFlow {
     this.systems = event.systems ?? [];
     this.parameters = event.parameters ?? {};
     /**
-     * It is mandatory have the constructor and call the super with event of main handler
-     * You can get the systems configured in automation and save in class property for further use
+     * It is mandatory to have the constructor call the super with the event of the main handler.
+     * You can get the systems configured in automation and save them in a class attribute for further use.
      */
   }
 
   /* istanbul ignore next */
   defineMetadata(): Metadata[] {
     /**
-     * Return all columns that will be visible in monitoring screen.
-     * The components order is the display order in monitoring table
+     * Return all columns that will be visible on the monitoring screen.
+     * The components order is the display order in the monitoring table.
      *
      * The implementation of this method is mandatory
      */
@@ -48,10 +48,10 @@ export default class Integration extends DeltaIntegrationFlow {
 
   async loadSourceSystemData(payload?: any): Promise<IntegrationModel[]> {
     /**
-     * Return the source system data as a plain array of objets
+     * Return the source system data as a plain array of objects
      *
      * This is the method where you will extract your source data
-     * If your automation is a webhook, the payload sent  will be avaiable in "payload" parameter.
+     * If your automation is a webhook, the payload sent will be available in the "payload" parameter.
      *
      * The implementation of this method is mandatory
      */
@@ -69,8 +69,8 @@ export default class Integration extends DeltaIntegrationFlow {
 
   async loadTargetSystemData(): Promise<IntegrationModel[]> {
     /**
-     * Return target source system data as a plain array of objets
-     * This is the method where you will extract your target data, for delta calculation
+     * Returns target source system data as a plain array of objects
+     * This is the method where you will extract your target data for delta calculation
      */
     return [
       {
@@ -86,7 +86,7 @@ export default class Integration extends DeltaIntegrationFlow {
 
   async insertAction(item: IntegrationModel): Promise<IntegrationMessageReturn> {
     /**
-     * Create new items in the target system and return a message to moniroting
+     * Create new items in the target system and return a message to the monitoring
      */
     return ({
       data: {},
@@ -97,7 +97,7 @@ export default class Integration extends DeltaIntegrationFlow {
   async updateAction(oldItem: IntegrationModel, newItem: IntegrationModel): Promise<IntegrationMessageReturn> {
     return {
       /**
-       * Update existing items in the target system and return a message to moniroting
+       * Update existing items in the target system and return a message to the monitoring
        */
       data: {},
       message: 'Updated successfully',
@@ -106,7 +106,7 @@ export default class Integration extends DeltaIntegrationFlow {
 
   async deleteAction(item: IntegrationModel): Promise<IntegrationMessageReturn> {
     /**
-     * Delete existing items in the target system not extracted on source system and return a message to moniroting
+     * Delete existing items in the target system not extracted from the source system and return a message to the monitoring
      */
     return ({
       data: {},

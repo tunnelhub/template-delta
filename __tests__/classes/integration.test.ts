@@ -7,7 +7,7 @@ import { DeltaIntegrationFlow } from '@4success/tunnelhub-sdk/src/classes/flows/
 describe('test src/integration', () => {
   beforeAll(() => {
     /**
-     * The code bellow is ** mandatory ** to avoid TunnelHub SDK make external calls trying persist logs
+     * The code below is mandatory to avoid TunnelHub SDK making external calls trying to persist logs
      * You can make this mock using the same code with any IntegrationFlow at @4success/tunnelhub-sdk/classes/flows
      */
     const persistLambdaContextFunc = jest.spyOn(AutomationExecution as any, 'persistLambdaContext');
@@ -35,7 +35,6 @@ describe('test src/integration', () => {
     updateMetadata.mockImplementation(() => {
     });
   });
-
 
   test('successfully test', async () => {
     const integration = new Integration({}, {});
