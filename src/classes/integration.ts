@@ -1,6 +1,6 @@
-import { DeltaIntegrationFlow } from '@4success/tunnelhub-sdk/src/classes/flows/deltaIntegrationFlow';
-import { IntegrationMessageReturn, Metadata } from '@4success/tunnelhub-sdk';
-import { GenericParameter, TunnelHubSystem } from '@4success/tunnelhub-sdk/src/types/data';
+import { DeltaIntegrationFlow } from '@tunnelhub/sdk/src/classes/flows/deltaIntegrationFlow';
+import { IntegrationMessageReturn, Metadata } from '@tunnelhub/sdk';
+import { GenericParameter, TunnelHubSystem } from '@tunnelhub/sdk/src/types/data';
 import { IntegrationModel } from '../data';
 
 export default class Integration extends DeltaIntegrationFlow {
