@@ -8,10 +8,10 @@ package:
 configuration:
   runtimeEngine: LAMBDA
   entrypoint: index.handler
-  runtime: nodejs14.x
-  memorySize: 128
+  runtime: nodejs18.x
+  memorySize: 256
   timeout: 30
-#
+
 # Use this if is required run on VPC
 #
 # vpcConfig:
