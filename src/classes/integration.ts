@@ -2,6 +2,7 @@ import { DeltaIntegrationFlow } from '@tunnelhub/sdk/src/classes/flows/deltaInte
 import { IntegrationMessageReturn, Metadata } from '@tunnelhub/sdk';
 import { GenericParameter, TunnelHubSystem } from '@tunnelhub/sdk/src/types/data';
 import { IntegrationModel } from '../data';
+import metadata from '../metadata';
 
 export default class Integration extends DeltaIntegrationFlow {
   private static keyFields: string[] = [
@@ -26,24 +27,7 @@ export default class Integration extends DeltaIntegrationFlow {
 
   /* istanbul ignore next */
   defineMetadata(): Metadata[] {
-    /**
-     * Return all columns that will be visible on the monitoring screen.
-     * The components order is the display order in the monitoring table.
-     *
-     * The implementation of this method is mandatory
-     */
-    return [
-      {
-        fieldName: 'key_field',
-        fieldLabel: 'Key field',
-        fieldType: 'TEXT',
-      },
-      {
-        fieldName: 'regular_field',
-        fieldLabel: 'Regular field',
-        fieldType: 'TEXT',
-      },
-    ];
+    return metadata;
   }
 
   async loadSourceSystemData(payload?: any): Promise<IntegrationModel[]> {
