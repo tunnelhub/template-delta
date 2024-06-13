@@ -4,7 +4,7 @@ import { GenericParameter, TunnelHubSystem } from '@tunnelhub/sdk/src/types/data
 import { IntegrationModel } from '../types';
 import metadata from '../metadata';
 
-export default class Integration extends DeltaIntegrationFlow {
+export default class Integration extends DeltaIntegrationFlow<IntegrationModel> {
   private static keyFields: string[] = [
     'key_field',
   ];
@@ -39,16 +39,7 @@ export default class Integration extends DeltaIntegrationFlow {
      *
      * The implementation of this method is mandatory
      */
-    return [
-      {
-        key_field: '1',
-        regular_field: 'anyString',
-      },
-      {
-        key_field: '2',
-        regular_field: 'anotherString',
-      },
-    ];
+    return [];
   }
 
   async loadTargetSystemData(): Promise<IntegrationModel[]> {
@@ -56,16 +47,7 @@ export default class Integration extends DeltaIntegrationFlow {
      * Returns target source system data as a plain array of objects
      * This is the method where you will extract your target data for delta calculation
      */
-    return [
-      {
-        key_field: '2',
-        regular_field: 'oldAnotherString',
-      },
-      {
-        key_field: '3',
-        regular_field: 'anyotherstring',
-      },
-    ];
+    return [];
   }
 
   async insertAction(item: IntegrationModel): Promise<IntegrationMessageReturn> {
