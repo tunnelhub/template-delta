@@ -13,7 +13,7 @@ imagens delta.
 
 ### Configuração padrão:
 
-* Ambiente: nodejs18.x
+* Ambiente: nodejs22.x
 * Memória: 256mb
 * Timeout: 60s
 
