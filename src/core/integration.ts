@@ -5,7 +5,7 @@ import {
   Metadata,
   TunnelHubSystem,
 } from '@tunnelhub/sdk';
-import { IntegrationModel } from '../types';
+import { IntegrationModel } from '../types/integration';
 import metadata from '../metadata';
 
 export default class Integration extends DeltaIntegrationFlow<IntegrationModel> {

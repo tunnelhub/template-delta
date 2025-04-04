@@ -1,4 +1,4 @@
-import Integration from '../../src/classes/integration';
+import Integration from '../../src/core/integration';
 import { SDK } from '@tunnelhub/sdk';
 
 describe('test src/integration', () => {
