@@ -1,6 +1,6 @@
 import {
+  AutomatedIntegrationParameters,
   DeltaIntegrationFlow,
-  GenericParameter,
   IntegrationMessageReturn,
   Metadata,
   TunnelHubSystem,
@@ -16,7 +16,7 @@ export default class Integration extends DeltaIntegrationFlow<IntegrationModel> 
     'regular_field',
   ];
 
-  private readonly parameters: { custom: GenericParameter[] };
+  private readonly parameters: AutomatedIntegrationParameters;
   private readonly systems: TunnelHubSystem[];
 
   constructor(event: any, context: any) {
