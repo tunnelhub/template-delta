@@ -14,8 +14,8 @@ imagens delta.
 ### Configuração padrão:
 
 * Ambiente: nodejs22.x
-* Memória: 256mb
-* Timeout: 60s
+* Memória: 512mb
+* Timeout: 30s
 
 Você pode personalizar essas configurações no arquivo **tunnelhub.yml**.
 
